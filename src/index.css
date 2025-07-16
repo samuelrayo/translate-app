@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+  box-sizing: border-box;
+  list-style: none
+}
+
+body{
+    background-color: #111116;
+}
+
+button:disabled {
+  color: gray;
+  background-color: lightgray;
+  opacity: 0.6;
+}
+
+button:disabled:hover {
+  cursor: default;
+}
