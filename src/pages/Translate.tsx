@@ -19,7 +19,7 @@ import { Modal } from '../components/Modal'
 import saveHistory from '../service/saveHistory'
 function Translate() {
 
-  const [historySaved, setHistorySaved]  = useState(null)
+  const [historySaved, setHistorySaved]  = useState<boolean|null>(null)
   
   const textAreaFrom = useRef<HTMLTextAreaElement>(null)
   const textAreaTo = useRef<HTMLTextAreaElement>(null)
@@ -71,12 +71,13 @@ function Translate() {
     // translate({from: fromLanguage, to: toLanguage, text:fromText }).then((data) => {
     
     translate({ from: fromLanguage, to: toLanguage, text: debounceFromText }).then((data) => {
-      saveHistory({from: fromLanguage, to:toLanguage, text: debounceFromText,languageFrom: fromLanguage,languageTo: toLanguage})
-      setToTextTranslated(data)
+      return saveHistory({from: fromLanguage, text: debounceFromText,translatedText, languageFrom: fromLanguage,languageTo: toLanguage}).then(() => {
+        setHistorySaved(true)
+        setToTextTranslated(data)
+      }) 
       // setLoading(false)
     }).catch((err) => {
-      const msgError = import.meta.env.MODE === 'development' ? err : 'Ocurrió un error inesperado'
-
+      const msgError = import.meta.env.MODE === 'development' ? err.message : 'Ocurrió un error inesperado'
       setError(msgError)
     }) 
 
@@ -100,6 +101,24 @@ function Translate() {
 
   }
 
+
+  const toastMessage = (message: string) => {
+    toast(message, {
+      theme: 'dark', 
+      progress: undefined
+    })
+  }
+
+
+  useEffect(() => {
+
+    if (historySaved){
+      toastMessage("Historial actualizado!")
+    }
+  }, [historySaved])
+
+
+  console.log("error", error)
   return (
 
     <section className='flex justify-center items-center h-dvh'>
@@ -147,8 +166,9 @@ function Translate() {
         </div>
       </div>
 
-      {error && <Modal isOpen={!!error} onClose={() => setError(null)}><Error message={error.message} /></Modal> }
+      {error && <Modal isOpen={!!error} onClose={() => setError(null)}><Error message={error} /></Modal> }
       <ToastContainer position='bottom-center' autoClose={500} transition={Slide} />
+      
     </section>
   )
 }

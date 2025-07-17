@@ -1,12 +1,11 @@
 import { API_URL } from "../consts"
 
 
-async function saveHistory({ from, to, text, languageFrom, languageTo }) {
+async function saveHistory({ from, text, translatedText, languageFrom, languageTo }) {
 
     const initialData: any = {
-        from,
-        to,
-        text, 
+        fromText: from,
+        translatedText,
         languageFrom, 
         languageTo
     }
@@ -26,13 +25,9 @@ async function saveHistory({ from, to, text, languageFrom, languageTo }) {
             throw new Error("Ha ocurrido un problema, intenta de nuevo")
         }
 
-        const data = await req.json()
-
-        const dataTranslated = data?.result?.TranslatedText
-        return dataTranslated
+        return true
         // !
         } catch (error: unknown) {
-            console.log("entra a error")
 
         if (error instanceof Error) {
             throw new Error(error.message)
